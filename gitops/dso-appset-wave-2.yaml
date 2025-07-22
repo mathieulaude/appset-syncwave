@@ -1,0 +1,82 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: dso-install-manager-wave-2
+  namespace: argo-cpin
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  ignoreApplicationDifferences:
+    - jqPathExpressions:
+        - .spec.source.plugin.env[] | select(.name == "HELM_VALUES").value
+  generators:
+    - matrix:
+        generators:
+          # Ce générateur va trouver les applications de la phase 1 qui sont saines
+          - clusters:
+              # On cible le cluster où Argo CD est installé
+              selector:
+                matchLabels:
+                  argocd.argoproj.io/secret-type: cluster
+              # La magie opère ici
+              values:
+                # On recherche des applications Argo CD
+                kind: Application
+                # On filtre sur notre étiquette et leur état de santé
+                labelSelector: "app-dependency-group=phase-1"
+                # Le champ 'status.health.status' doit être 'Healthy'
+                jsonPath:
+                  path: "$.status.health.status"
+                  match: "Healthy"
+          - git:
+              repoURL: https://github.com/mathieulaude/appset-syncwave.git
+              revision: main
+              files:
+                - path: "./gitops/envs/*/*.json"
+          - list:
+              elementsYaml: "{{ .apps | toJson }}"
+            selector:
+              matchExpressions:
+                - key: enabled
+                  operator: In
+                  values:
+                    - "true"
+                - key: syncWave
+                  operator: In
+                  values: ["30"]
+  template:
+    metadata:
+      name: "test-{{.prefix}}{{.app}}"
+      annotations:
+        argocd.argoproj.io/compare-options: ServerSideDiff=true
+        argocd.argoproj.io/sync-wave: "{{.syncWave}}"
+      labels:
+        platform.env: "{{.env}}"
+        platform.provider: "{{.provider}}"
+        platform.region: "{{.region}}"
+        sync-wave: "{{.syncWave}}"
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      revisionHistoryLimit: 3
+      source:
+        repoURL: https://github.com/mathieulaude/guestbook.git
+        path: .
+        targetRevision: main
+      destination:
+        name: "in-cluster"
+        namespace: "{{.namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+        #  selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+          - ServerSideApply=true
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+    # automated:
+    #   selfHeal: true
