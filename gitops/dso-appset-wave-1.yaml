@@ -4,6 +4,8 @@ kind: ApplicationSet
 metadata:
   name: dso-install-manager-wave-1
   namespace: argo-cpin
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]

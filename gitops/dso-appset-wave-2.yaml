@@ -4,6 +4,8 @@ kind: ApplicationSet
 metadata:
   name: dso-install-manager-wave-2
   namespace: argo-cpin
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=error"]
@@ -13,22 +15,6 @@ spec:
   generators:
     - matrix:
         generators:
-          # Ce générateur va trouver les applications de la phase 1 qui sont saines
-          - clusters:
-              # On cible le cluster où Argo CD est installé
-              selector:
-                matchLabels:
-                  argocd.argoproj.io/secret-type: cluster
-              # La magie opère ici
-              values:
-                # On recherche des applications Argo CD
-                kind: Application
-                # On filtre sur notre étiquette et leur état de santé
-                labelSelector: "app-dependency-group=phase-1"
-                # Le champ 'status.health.status' doit être 'Healthy'
-                jsonPath:
-                  path: "$.status.health.status"
-                  match: "Healthy"
           - git:
               repoURL: https://github.com/mathieulaude/appset-syncwave.git
               revision: main
