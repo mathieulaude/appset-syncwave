@@ -48,8 +48,8 @@ spec:
       project: default
       revisionHistoryLimit: 3
       source:
-        repoURL: https://github.com/mathieulaude/guestbook.git
-        path: .
+        repoURL: https://github.com/mathieulaude/helm-example.git
+        path: charts/hello-world
         targetRevision: main
       destination:
         name: "in-cluster"
