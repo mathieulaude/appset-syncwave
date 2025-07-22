@@ -1,0 +1,124 @@
+{
+  "env": "conf-dso",
+  "provider": "self-hosted",
+  "region": "fr-par",
+  "prefix": "dso-",
+  "destination": {
+    "clusterName": "sdid-hp"
+  },
+  "targetRevision": "main",
+  "apps": [
+    {
+      "app": "global",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "global",
+      "customPrefix": "",
+      "syncWave": 10
+    },
+    {
+      "app": "certmanager",
+      "enabled": false,
+      "clusterName": "",
+      "namespace": "certmanager",
+      "customPrefix": "",
+      "syncWave": 10
+    },
+    {
+      "app": "kyverno",
+      "enabled": false,
+      "clusterName": "",
+      "namespace": "kyverno",
+      "customPrefix": "",
+      "syncWave": 10
+    },
+    {
+      "app": "keycloak",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "keycloak",
+      "customPrefix": "",
+      "syncWave": 20
+    },
+    {
+      "app": "gitlab",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "gitlab",
+      "customPrefix": "",
+      "syncWave": 30
+    },
+    {
+      "app": "glexporter",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "gitlab",
+      "customPrefix": "",
+      "syncWave": 40
+    },
+    {
+      "app": "gitlabrunner",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "gitlab",
+      "customPrefix": "",
+      "syncWave": 40
+    },
+    {
+      "app": "vault",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "vault",
+      "customPrefix": "",
+      "syncWave": 40
+    },
+    {
+      "app": "harbor",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "harbor",
+      "customPrefix": "",
+      "syncWave": 50
+    },
+    {
+      "app": "argocd",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "argocd",
+      "customPrefix": "",
+      "syncWave": 50
+    },
+    {
+      "app": "nexus",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "nexus",
+      "customPrefix": "",
+      "syncWave": 50
+    },
+    {
+      "app": "sonarqube",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "sonarqube",
+      "customPrefix": "",
+      "syncWave": 50
+    },
+    {
+      "app": "console",
+      "enabled": true,
+      "clusterName": "",
+      "namespace": "console",
+      "customPrefix": "",
+      "syncWave": 60
+    },
+    {
+      "app": "observability",
+      "enabled": true,
+      "clusterName": "in-cluster",
+      "namespace": "argo",
+      "customPrefix": "infra-",
+      "syncWave": 60
+    }
+  ]
+}

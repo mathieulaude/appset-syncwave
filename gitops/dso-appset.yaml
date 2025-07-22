@@ -1,0 +1,65 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: sdid-hp-dso-install-manager
+  namespace: infra-argo
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  ignoreApplicationDifferences:
+    - jqPathExpressions:
+        - .spec.source.plugin.env[] | select(.name == "HELM_VALUES").value
+  generators:
+    - matrix:
+        generators:
+          - git:
+              repoURL: https://github.com/mathieulaude/appset-syncwave.git
+              revision: main
+              files:
+                - path: "./gitops/envs/*/*.json"
+          - list:
+              elementsYaml: "{{ .apps | toJson }}"
+            selector:
+              matchExpressions:
+                - key: enabled
+                  operator: In
+                  values:
+                    - "true"
+                - key: syncWave
+                  operator: In
+                  values: ["10", "20"]
+  template:
+    metadata:
+      name: "test-{{.prefix}}{{.app}}"
+      annotations:
+        argocd.argoproj.io/compare-options: ServerSideDiff=true
+        argocd.argoproj.io/sync-wave: "{{.syncWave}}"
+      labels:
+        platform.env: "{{.env}}"
+        platform.provider: "{{.provider}}"
+        platform.region: "{{.region}}"
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: default
+      revisionHistoryLimit: 3
+      source:
+        repoURL: https://github.com/mathieulaude/guestbook.git
+        path: .
+        targetRevision: main
+      destination:
+        name: "in-cluster"
+        namespace: "{{.namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+        #  selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+          - ServerSideApply=true
+  syncPolicy:
+    preserveResourcesOnDeletion: true
+    # automated:
+    #   selfHeal: true
