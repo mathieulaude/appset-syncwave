@@ -20,6 +20,7 @@ spec:
               revision: main
               files:
                 - path: "./gitops/envs/*/*.json"
+              requeueAfterSeconds: 10
           - list:
               elementsYaml: "{{ .apps | toJson }}"
             selector:
