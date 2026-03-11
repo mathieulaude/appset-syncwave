@@ -7,8 +7,58 @@ spec:
   chart:
     version: "9.9.1"
     values:
+      installCertmanager: false
+      certmanager:
+        install: false
+      nginx-ingress:
+        enabled: false
+      prometheus:
+        install: false
+      gitlab-runner:
+        install: false
+      registry:
+        enabled: false
       global:
+        edition: ce
+        minio:
+          enabled: false
+        appConfig:
+          object_store:
+            enabled: false
+          lfs:
+            enabled: false
+          artifacts:
+            enabled: false
+          uploads:
+            enabled: false
+          packages:
+            enabled: false
+          externalDiffs:
+            enabled: false
+          terraformState:
+            enabled: false
+          dependencyProxy:
+            enabled: false
+          ciSecureFiles:
+            enabled: false
         hosts:
           domain: example.com
         ingress:
           configureCertmanager: false
+      gitlab:
+        gitlab-exporter:
+          enabled: false
+        kas:
+          enabled: false
+        pages:
+          enabled: false
+        toolbox:
+          enabled: false
+        gitlab-shell:
+          enabled: false
+        webservice:
+          replicas: 1
+        sidekiq:
+          replicas: 1
+      gitaly:
+        replicas: 1
